@@ -2,100 +2,105 @@
 
 ## Project Overview
 
-Este caso de portafolio de Miguel Torres parte de un proyecto aprobado en TripleTen. Analicé dónde se pierden más usuarios en el recorrido de compra y en qué momento conviene probar una acción para que vuelvan después de registrarse. El **14,32 %** de quienes seleccionaron un producto lo agregó al carrito. Ese fue el punto con mayor pérdida entre las transiciones analizadas.
+Where do shoppers drop out of the purchase journey, and when are new users less likely to return? This project uses SQL and Excel to examine the steps from a first visit to a purchase and measure activity during the first 28 days after signup. The largest drop in the funnel occurred between selecting an item and adding it to the cart. Only **14.32%** of users who selected an item added it to their cart.
 
 ## Business Context
 
-Para priorizar mejoras en la experiencia de compra, el equipo de producto necesita saber si los usuarios abandonan antes de agregar un producto al carrito o cuando ya están intentando pagar. La actividad después del registro permite identificar un momento para probar acciones que incentiven el regreso a la plataforma.
+The product team needs to decide where to focus its efforts. A drop before users add an item to the cart points to a different part of the shopping experience than a drop during checkout. Tracking activity after signup helps the team decide when to test a message that encourages users to return.
 
 ## Datasets Used
 
-- **Eventos de compra (`mercadolibre_funnel`).** Registran las acciones de usuarios y sesiones, junto con su fecha y país. El embudo cubre del 1 de enero al 31 de agosto de 2025.
-- **Actividad después del registro (`mercadolibre_retention`).** Permite identificar si un usuario estuvo activo a los 7, 14, 21 y 28 días de registrarse. El resumen ejecutivo de retención se centra en los registros del 1 de enero al 1 de junio de 2025.
+### 1. `mercadolibre_funnel`
+
+The shopping events table records actions by user and session, along with the event date and country. These records describe the steps shoppers took between their first visit and a purchase. The funnel covers January 1 through August 31, 2025.
+
+### 2. `mercadolibre_retention`
+
+The retention table records activity after signup. It supports comparisons at 7, 14, 21, and 28 days and a breakdown by country. The executive retention summary covers users who signed up from January 1 through June 1, 2025.
 
 ## Project Objectives
 
-- Identificar la transición con mayor pérdida de usuarios en el recorrido de compra.
-- Medir cómo cambia la actividad tras el registro y comparar los resultados por país.
-- Proponer acciones que puedan evaluarse con métricas de conversión y retención.
+- Identify the step where the largest share of users dropped out of the purchase journey.
+- Measure how activity changed after signup and compare the results by country.
+- Propose actions the product team can evaluate with conversion and retention metrics.
 
 ## Analytical Workflow
 
 ### 1. Data Loading and Initial Exploration
 
-Usé SQL para inspeccionar las primeras filas de las tablas e identificar los eventos del recorrido de compra.
+I used SQL to inspect the first rows of both tables and identify the events that make up the purchase journey. This established which events represented steps such as selecting an item, adding it to the cart, and completing a purchase.
 
 ### 2. Data Quality Review
 
-Revisé la estructura de las tablas para identificar los campos de usuario, sesión, fecha y actividad que sustentan el análisis.
+I reviewed the table structure to identify the user, session, date, and activity fields used in the analysis. These fields distinguish actions during a shopping session from activity measured after signup.
 
 ### 3. Data Cleaning
 
-Para el embudo, la fecha relevante es la del evento de compra. Para la retención, el seguimiento empieza en la fecha de registro de cada usuario.
+Each part of the analysis uses a different date. The funnel uses the event date to define the shopping period. Retention uses each user's signup date as the starting point for measuring activity on the four follow-up days.
 
 ### 4. User-Level Aggregation
 
-El embudo resume el avance entre pasos, desde la primera visita hasta la compra. Para analizar la retención, agrupé a los usuarios por mes de registro. Cada grupo mensual es una cohorte.
+The funnel summarizes how users moved through the shopping journey from first visit to purchase. For retention, I grouped users by signup month. Each group of users who signed up in the same month is a **cohort**.
 
 ### 5. Descriptive Analysis
 
-Comparé la proporción que avanzó de un paso al siguiente y la proporción de usuarios activos en cada momento de seguimiento. El libro de análisis reúne los resultados generales y el desglose por país.
+For the funnel, I compared the share of users who reached each next step. For retention, I compared the share of users who were active on each follow-up day. The workbook shows the overall results and the breakdown by country.
 
 ### 6. Data Visualization
 
-Cada barra muestra qué porcentaje avanzó al siguiente paso. La barra destacada muestra la transición con menor conversión.
+Each bar shows the share of users who advanced from one funnel step to the next. The highlighted bar marks the step with the lowest conversion rate.
 
 <p align="center">
-  <img src="images/1_mercadolibre-funnel-conversion.png" alt="Conversión entre etapas del embudo. De selección a carrito avanzó el 14,32 %, la tasa más baja de las cinco transiciones mostradas." width="760">
+  <img src="images/1_mercadolibre-funnel-conversion.png" alt="Conversion rates for five funnel steps. Item selection to cart has the lowest rate at 14.32%." width="760">
 </p>
 
-*Fuente · Excel aprobado, hoja `Resumen`, rango `A9:C14`. Los valores se pueden consultar en el [libro de análisis](mercadolibre-funnel-retention-analysis.xlsx).*
+*Source · [Analysis workbook](mercadolibre-funnel-retention-analysis.xlsx), `Resumen` worksheet.*
 
-La segunda gráfica muestra qué porcentaje de las personas que se registraron en marzo de 2025 estuvo activo a los 7, 14, 21 y 28 días.
+The retention chart follows users who signed up in March 2025. Each point shows the share of that cohort who were active on the indicated day after signup.
 
 <p align="center">
-  <img src="images/2_mercadolibre-march-2025-cohort-retention.png" alt="Actividad de los usuarios registrados en marzo de 2025. El 87,7 % estuvo activo el día 7, el 56,8 % el día 14, el 26,6 % el día 21 y el 3,0 % el día 28." width="760">
+  <img src="images/2_mercadolibre-march-2025-cohort-retention.png" alt="Retention for users who signed up in March 2025. The active share was 87.7% on Day 7, 56.8% on Day 14, 26.6% on Day 21, and 3.0% on Day 28." width="760">
 </p>
 
-*Fuente · Excel aprobado, hoja `Retencion x Cohort`, rango `A4:E4`. Los valores se pueden consultar en el [libro de análisis](mercadolibre-funnel-retention-analysis.xlsx).*
+*Source · [Analysis workbook](mercadolibre-funnel-retention-analysis.xlsx), `Retencion x Cohort` worksheet.*
 
 ### 7. Outlier Detection
 
-El libro también incluye a los usuarios registrados en agosto. En ese grupo, el **70,8 %** estuvo activo a los 7 días y el **0,2 %** a los 28 días. Agosto se presenta por separado porque queda fuera del periodo de registro usado en el resumen ejecutivo de retención.
+Among users who signed up in August 2025, **70.8%** were active on Day 7 and **0.2%** on Day 28. August falls outside the signup period used in the executive retention summary, so its results are presented separately here.
 
 ### 8. Customer Segmentation
 
-A los 28 días del registro, el porcentaje de usuarios activos fue del **3,2 % en Perú**, el **3,1 % en México** y el **1,6 % en Colombia**. El desglose muestra cómo varía la actividad entre mercados.
+The country breakdown shows how activity varied across markets. On Day 28, **3.2%** of users in Peru were active, compared with **3.1%** in Mexico and **1.6%** in Colombia.
 
 ### 9. Executive Insights
 
-La ficha del producto es el primer punto para probar una mejora de conversión. Para retención, la segunda semana después del registro ofrece un momento para probar una comunicación que invite al usuario a volver.
+The funnel points to the product page as the first place to test a conversion improvement. The decline in activity during the second week after signup suggests a window to test a reminder. Each test would address a different point in the user journey.
 
 ## Key Tasks Performed
 
-Exploré las tablas con SQL, documenté en Excel el embudo y la retención por país y por mes de registro, y preparé dos gráficas para comunicar los hallazgos.
+I explored the source tables in SQL, documented funnel and retention results in Excel, and compared results across countries and signup months. I prepared two charts to communicate the main conversion and retention patterns.
 
 ## Key Findings
 
-- **Conversión.** El **85,68 %** de quienes seleccionaron un producto no lo agregó al carrito. Fue la mayor pérdida del embudo y sitúa la primera prueba de conversión en la ficha del producto.
-- **Retención.** Entre los usuarios incluidos en el resumen ejecutivo, el **86,6 %** estuvo activo a los 7 días del registro y el **55,4 %** a los 14 días. La caída de **31,2 puntos porcentuales** entre ambos cortes señala cuándo probar una acción de reactivación. En D28, la actividad fue del **2,6 %**.
+- **Conversion.** From January through August 2025, **85.68%** of users who selected an item did not add it to the cart. This was the largest drop among the measured steps and makes the product page the first place to test a change.
+- **Retention.** In the executive summary, **86.6%** of users were active on Day 7, **55.4%** on Day 14, and **2.6%** on Day 28. The **31.2 percentage-point** drop from Day 7 to Day 14 identifies when to test a reminder.
 
 ## Business Recommendations
 
-- **Facilitar el paso al carrito.** Probar si mostrar el costo y el plazo de entrega en la ficha aumenta la proporción de usuarios que agregan un producto al carrito. Medir también cuántos terminan comprando.
-- **Invitar al usuario a volver durante su segunda semana.** Enviar un recordatorio entre los días 7 y 14 después del registro a un grupo de usuarios. Comparar cuántos vuelven a usar la plataforma frente a un grupo similar que no recibe el mensaje.
+- **Make delivery information easier to find.** Test whether showing shipping costs and estimated delivery dates on the product page increases the share of users who add an item to the cart. Track completed purchases to see whether the effect carries through checkout.
+- **Test a reminder during the second week after signup.** Send a reminder between Day 7 and Day 14 to one group and compare its return rate with a similar group that receives no reminder.
 
 ## Tools and Skills
 
-**SQL** para explorar las tablas y estructurar el análisis de conversión y retención. **Excel** para documentar resultados, comparar mercados y preparar el resumen ejecutivo.
+I used **SQL** to explore the tables and structure the conversion and retention analysis. I used **Excel** to organize the results, compare markets, and prepare the executive summary.
 
 ## Professional Value
 
-El análisis conecta dos decisiones de producto con sus métricas. Una mejora en la ficha se evalúa por el paso al carrito y la compra final. Una acción de reactivación se evalúa por el regreso de usuarios registrados.
+The project connects two product decisions to measurable outcomes. A change to the product page can be evaluated through cart additions and completed purchases. A reminder can be evaluated through the share of registered users who return.
 
 ## Personal Voice & Learning
 
-Al revisar el embudo, encontré que el mayor punto de pérdida ya aparecía al pasar de la ficha al carrito. Ese hallazgo me permitió formular una prueba concreta sobre la información que ve el comprador antes de decidir.
+I learned to look at each step of the purchase journey before choosing where to intervene. Finding the largest drop between item selection and cart addition helped me propose a specific test of the information shoppers see before they decide.
 
 ## Repository Structure
 
@@ -110,9 +115,9 @@ mercadolibre-funnel-retention-analysis/
 
 ### File Guide
 
-- [Libro de análisis](mercadolibre-funnel-retention-analysis.xlsx) · Resumen ejecutivo y tablas de conversión y retención.
-- [Gráficas](images/) · Archivos PNG del embudo y de la actividad de los usuarios registrados en marzo.
+- [Analysis workbook](mercadolibre-funnel-retention-analysis.xlsx) · Executive summary and conversion and retention tables.
+- [Charts](images/) · PNG files for the purchase funnel and the March 2025 signup cohort.
 
 ## Reproducibility Note
 
-El [libro de análisis](mercadolibre-funnel-retention-analysis.xlsx) contiene los valores usados en las gráficas. La hoja `Resumen` presenta la conversión entre etapas y `Embudo General` muestra el avance acumulado. Para la segunda gráfica se usa la fila de marzo de 2025 en `Retencion x Cohort`. El repositorio publica las tablas de resultados y las visualizaciones.
+The [analysis workbook](mercadolibre-funnel-retention-analysis.xlsx) contains the values used in both charts. The `Resumen` worksheet shows conversion between steps, and `Embudo General` shows cumulative progress through the funnel. The retention chart uses the March 2025 row in `Retencion x Cohort`.
